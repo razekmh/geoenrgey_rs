@@ -2,6 +2,7 @@ import arcpy
 from arcpy.ia import *
 from pathlib import Path
 import time
+import datetime
 
 # output folder
 output_folder = Path("E:\Angola\hillshade")
@@ -40,7 +41,7 @@ for dem_folder in dem_folders:
     folder_counter += 1
     end = time.time()
     folder_processing_time = end - start
-    total_processing_time += processing_time
+    total_processing_time += folder_processing_time
+
     print(f"{folder_counter} out of {len(dem_folders)} took {folder_processing_time} seconds")
-    print(f"avg time = {total_processing_time/folder_counter} seconds, estimated remining time {time.strftime('%H:%M:%S', time.gmtime((total_processing_time/folder_counter))*(len(dem_folders)-folder_counter)))
-})
+    print(f"avg time = {total_processing_time/folder_counter} seconds, estimated remining time {datetime.timedelta((total_processing_time/folder_counter)*(len(dem_folders)-folder_counter))})
