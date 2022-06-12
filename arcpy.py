@@ -44,4 +44,4 @@ for dem_folder in dem_folders:
     total_processing_time += folder_processing_time
 
     print(f"{folder_counter} out of {len(dem_folders)} took {folder_processing_time} seconds")
-    print(f"avg time = {total_processing_time/folder_counter} seconds, estimated remining time {datetime.timedelta((total_processing_time/folder_counter)*(len(dem_folders)-folder_counter))})
+    print(f"avg time = {total_processing_time/folder_counter} seconds, estimated remining time {datetime.timedelta(seconds=(total_processing_time/folder_counter)*(len(dem_folders)-folder_counter))}")
