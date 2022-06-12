@@ -1,22 +1,46 @@
-# Import the system modules
-from pathlib import Path
 import arcpy
-from arcpy.sa import Hillshade
+from arcpy.ia import *
+from pathlib import Path
+import time
 
-processing_env = Path("E:\Angola\arcpy_env")
+# output folder
+output_folder = Path("E:\Angola\hillshade")
+input_folder = Path("E:\Angola\ALOS_DEM")
 
-# Set the analysis environments
-arcpy.env.workspace = r"E:\Angola\arcpy_env"
+# set env
+arcpy.env.workspace = "E:\Angola\hillshade"
 
+def list_folders(folder):
+    list_of_folders = []
+    for i in folder.iterdir():
+        if i.is_dir():
+            list_of_folders.append(i)
+    return list_of_folders
 
-# Set the local variables
-in_dem = Path("E:\Angola\ALOS_DEM\AP_01645_FBS_F6920_RT1\AP_01645_FBS_F6920_RT1.dem.tif")
+def list_dem_files(folder):
+    list_dem_files = []
+    for i in folder.iterdir():
+        if ".dem" in i.suffixes:
+            list_dem_files.append(i)
+    return list_dem_files
 
-# Execute the Hillshade function
-def hillshade_loop(in_dem):
-    for i in [180,225,270,315]:
-        out_hillshade = "hillshade_" + str(i) + ".tif"  # Set the output raster name    
-        out_hillshade_raster = Hillshade(in_dem, i, 45, 1)
-        out_hillshade_raster.save(Path(processing_env,out_hillshade))
+def get_hillshade(dem):
+    for angle in [180,225,270,315]:
+        out_hillshade_raster = Hillshade(str(dem), angle, 45, 1)
+        out_hillshade_raster.save(str(output_folder)+"\\"+Path(dem.stem).stem+"_"+str(angle)+".tif")
 
-# Save the output
+dem_folders = list_folders(input_folder)
+folder_counter = 0
+total_processing_time = 0 
+for dem_folder in dem_folders:
+    folder_start_time = start = time.time()
+    dem_files = list_dem_files(dem_folder)
+    for dem_file in dem_files:
+        get_hillshade(dem_file)
+    folder_counter += 1
+    end = time.time()
+    folder_processing_time = end - start
+    total_processing_time += processing_time
+    print(f"{folder_counter} out of {len(dem_folders)} took {folder_processing_time} seconds")
+    print(f"avg time = {total_processing_time/folder_counter} seconds, estimated remining time {time.strftime('%H:%M:%S', time.gmtime((total_processing_time/folder_counter))*(len(dem_folders)-folder_counter)))
+})
